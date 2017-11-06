@@ -105,7 +105,7 @@ class Policy:
         raise NotImplementedError
 
 
-class CatchPolicy(Policy):
+class CatchPolicy_off_poliy(Policy):
     def _initialize(self, ob_space, ac_space, nonlin_type, hidden_dims, connection_type):
         self.ac_space = ac_space
         self.hidden_dims = hidden_dims
@@ -184,7 +184,6 @@ class CatchPolicy(Policy):
         env_timestep_limit = GRID_SIZE - 2
         timestep_limit = env_timestep_limit if timestep_limit is None else min(timestep_limit, env_timestep_limit)
 
-        assert env.isOffPolicy()
 
         trajWeightedReards = []
         for i in range(40):
@@ -239,3 +238,122 @@ class catcher():
 
     def isOffPolicy(self):
         return True
+
+
+class CatchPolicy(Policy):
+    def _initialize(self, ob_space, ac_space, nonlin_type, hidden_dims, connection_type):
+        self.ac_space = ac_space
+        self.hidden_dims = hidden_dims
+        self.connection_type = connection_type
+
+        assert len(ob_space.shape) == len(self.ac_space.shape) == 1
+
+        self.nonlin = {'tanh': tf.tanh, 'relu': tf.nn.relu, 'elu': tf.nn.elu}[nonlin_type]
+
+        with tf.variable_scope(type(self).__name__) as scope:
+            # Policy network
+            o = tf.placeholder(tf.float32, [None] + list(ob_space.shape))
+            a = self._make_net(o)
+            self._act = U.function([o], a)
+        return scope
+
+    def _make_net(self, o):
+        # Process observation
+        if self.connection_type == 'ff':
+            x = o
+            for ilayer, hd in enumerate(self.hidden_dims):
+                x = self.nonlin(U.dense(x, hd, 'l{}'.format(ilayer), U.normc_initializer(1.0)))
+        else:
+            raise NotImplementedError(self.connection_type)
+
+        # Map to action
+        scores = U.dense(x, 3, 'out', U.normc_initializer(0.01))
+        # scores_nab = tf.reshape(scores, [-1, 1, 3])
+        aidx_na =  tf.argmax(scores_nab, 2)  # 0 ... num_bins-1
+        #a = tf.to_float(scores)
+        #sft = tf.nn.softmax(scores)
+
+        return np.argmax(tf.to_float(scores))
+
+    def initialize_from(self, filename, ob_stat=None):
+        """
+        Initializes weights from another policy, which must have the same architecture (variable names),
+        but the weight arrays can be smaller than the current policy.
+        """
+        with h5py.File(filename, 'r') as f:
+            f_var_names = []
+            f.visititems(lambda name, obj: f_var_names.append(name) if isinstance(obj, h5py.Dataset) else None)
+            assert set(v.name for v in self.all_variables) == set(f_var_names), 'Variable names do not match'
+
+            init_vals = []
+            for v in self.all_variables:
+                shp = v.get_shape().as_list()
+                f_shp = f[v.name].shape
+                assert len(shp) == len(f_shp) and all(a >= b for a, b in zip(shp, f_shp)), \
+                    'This policy must have more weights than the policy to load'
+                init_val = v.eval()
+                # ob_mean and ob_std are initialized with nan, so set them manually
+                if 'ob_mean' in v.name:
+                    init_val[:] = 0
+                    init_mean = init_val
+                elif 'ob_std' in v.name:
+                    init_val[:] = 0.001
+                    init_std = init_val
+                # Fill in subarray from the loaded policy
+                init_val[tuple([np.s_[:s] for s in f_shp])] = f[v.name]
+                init_vals.append(init_val)
+            self.set_all_vars(*init_vals)
+
+        if ob_stat is not None:
+            ob_stat.set_from_init(init_mean, init_std, init_count=1e5)
+
+
+
+       # === Rollouts/training ===
+
+    def rollout(self, env, *, render=False, timestep_limit=None, save_obs=False, random_stream=None):
+        """
+        If random_stream is provided, the rollout will take noisy actions with noise drawn from that stream.
+        Otherwise, no action noise will be added.
+        """
+        env_timestep_limit = env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')
+        timestep_limit = env_timestep_limit if timestep_limit is None else min(timestep_limit, env_timestep_limit)
+        rews = []
+        t = 0
+        if save_obs:
+            obs = []
+        ob = env.reset()
+        for _ in range(timestep_limit):
+            ac = self.act(ob[None], random_stream=random_stream)[0]
+            if save_obs:
+                obs.append(ob)
+            ob, rew, done, _ = env.step(ac)
+            rews.append(rew)
+            t += 1
+            if render:
+                env.render()
+            if done:
+                break
+        rews = np.array(rews, dtype=np.float32)
+        if save_obs:
+            return rews, t, np.array(obs)
+
+        return rews, t
+
+
+
+    def act(self, ob, random_stream=None):
+        return self._act(ob)
+
+    @property
+    def needs_ob_stat(self):
+        return False
+
+    @property
+    def needs_ref_batch(self):
+        return False
+
+
+
+
+
