@@ -149,7 +149,7 @@ class _Function(object):
         assert len(inputvals) == len(self.inputs)
         feed_dict = dict(zip(self.inputs, inputvals))
         feed_dict.update(self.givens)
-        results = get_session().run(list(map(int, self.outputs_update)), feed_dict=feed_dict)[:-1]
+        results = get_session().run(self.outputs_update, feed_dict=feed_dict)[:-1]
         if self.check_nan:
             if any(np.isnan(r).any() for r in results):
                 raise RuntimeError("Nan detected")
