@@ -268,12 +268,12 @@ class CatchPolicy(Policy):
 
         # Map to action
         scores = U.dense(x, 3, 'out', U.normc_initializer(0.01))
-        # scores_nab = tf.reshape(scores, [-1, 1, 3])
-        #aidx_na =  tf.argmax(scores_nab, 2)  # 0 ... num_bins-1
+        scores_nab = tf.reshape(scores, [-1, 1, 3])
+        aidx_na =  tf.argmax(scores_nab, 2)  # 0 ... num_bins-1
         #a = tf.to_float(scores)
         #sft = tf.nn.softmax(scores)
 
-        return np.argmax(tf.to_float(scores))
+        return aidx_na
 
     def initialize_from(self, filename, ob_stat=None):
         """
