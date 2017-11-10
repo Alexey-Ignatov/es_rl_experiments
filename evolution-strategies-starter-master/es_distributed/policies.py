@@ -228,16 +228,14 @@ class catcher():
         self.observation_space = np.zeros((GRID_SIZE, GRID_SIZE)).ravel()
         self.action_space = np.array([2])
 
-    def get_trajectory(self):
-        return rsample(self.memory, 1)[0]
+    def step(self, ac):
+        return self.ep.send(ac)
+
 
     def reset(self):
         self.ep = episode()
         S, won, _, _ = self.ep.__next__()
         return S
-
-    def isOffPolicy(self):
-        return True
 
 
 class CatchPolicy(Policy):
