@@ -355,6 +355,40 @@ class CatchPolicy(Policy):
         return False
 
 
+def episode():
+    """
+    Coroutine of episode.
+
+    Action has to be explicitly send to this coroutine.
+    """
+    x, y, z = (
+        np.random.randint(0, GRID_SIZE),  # X of fruit
+        0,  # Y of dot
+        np.random.randint(1, GRID_SIZE - 1)  # X of basket
+    )
+    while True:
+        X = np.zeros((GRID_SIZE, GRID_SIZE))  # Reset grid
+        X[y, x] = 1.  # Draw fruit
+        bar = range(z - 1, z + 2)
+        X[-1, bar] = 1.  # Draw basket
+
+        # End of game is known when fruit is at penultimate line of grid.
+        # End represents either a win or a loss
+        end = int(y >= GRID_SIZE - 2)
+        rew = 0
+        if end and x in bar:
+            rew = 1000
+        if end and x not in bar:
+            rew = -1000
+        if end and x == bar[1]:
+            rew = 1500
+
+        move = yield X.ravel(), rew, end, None
+        if end:
+            break
+        z = np.min([np.max([z + move - 1, 1]), GRID_SIZE - 2])
+        y += 1
+
 
 
 
