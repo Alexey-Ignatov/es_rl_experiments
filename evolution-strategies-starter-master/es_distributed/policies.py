@@ -223,7 +223,7 @@ class CatchPolicy_off_poliy(Policy):
 
 class catcher():
     def __init__(self):
-        self.memory = pickle.load(open('/home/alexey/experiments/evolution-strategies-starter-master/es_distributed/memoryList.pickle', 'rb'))
+        #self.memory = pickle.load(open('/home/alexey/experiments/evolution-strategies-starter-master/es_distributed/memoryList.pickle', 'rb'))
 
         self.observation_space = np.zeros((GRID_SIZE, GRID_SIZE)).ravel()
         self.action_space = np.array([2])
