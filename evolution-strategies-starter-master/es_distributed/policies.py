@@ -316,8 +316,9 @@ class CatchPolicy(Policy):
         If random_stream is provided, the rollout will take noisy actions with noise drawn from that stream.
         Otherwise, no action noise will be added.
         """
-        env_timestep_limit = env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')
-        timestep_limit = env_timestep_limit if timestep_limit is None else min(timestep_limit, env_timestep_limit)
+        #env_timestep_limit = env.spec.tags.get('wrapper_config.TimeLimit.max_episode_steps')
+        #timestep_limit = env_timestep_limit if timestep_limit is None else min(timestep_limit, env_timestep_limit)
+        timestep_limit = GRID_SIZE
         rews = []
         t = 0
         if save_obs:
