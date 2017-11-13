@@ -57,9 +57,9 @@ def workers(master_host, master_port, relay_socket_path, num_workers):
     # Start the relay
     master_redis_cfg = {'host': master_host, 'port': master_port}
     relay_redis_cfg = {'unix_socket_path': relay_socket_path}
-    if os.fork() == 0:
-        RelayClient(master_redis_cfg, relay_redis_cfg).run()
-        return
+    #if os.fork() == 0:
+    #    RelayClient(master_redis_cfg, relay_redis_cfg).run()
+    #    return
     # Start the workers
     noise = SharedNoiseTable()  # Workers share the same noise
     num_workers = num_workers if num_workers else os.cpu_count()
@@ -70,6 +70,20 @@ def workers(master_host, master_port, relay_socket_path, num_workers):
             return
     os.wait()
 
+
+@cli.command()
+@click.option('--master_host', required=True)
+@click.option('--master_port', default=6379, type=int)
+@click.option('--relay_socket_path', required=True)
+@click.option('--num_workers', type=int, default=0)
+def relay(master_host, master_port, relay_socket_path, num_workers):
+    # Start the relay
+    master_redis_cfg = {'host': master_host, 'port': master_port}
+    relay_redis_cfg = {'unix_socket_path': relay_socket_path}
+    if os.fork() == 0:
+        RelayClient(master_redis_cfg, relay_redis_cfg).run()
+        return
+    os.wait()
 
 if __name__ == '__main__':
     cli()
