@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 import subprocess
 import os
-
+import errno
 
 start_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/es_rl_experiments/evolution-strategies-starter-master"
 log_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/logs"
