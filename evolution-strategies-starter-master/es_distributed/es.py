@@ -53,7 +53,7 @@ class SharedNoiseTable(object):
     def __init__(self):
         import ctypes, multiprocessing
         seed = 123
-        count = 250000000  # 1 gigabyte of 32-bit numbers. Will actually sample 2 gigabytes below.
+        count = 25000000  # 1 gigabyte of 32-bit numbers. Will actually sample 2 gigabytes below.
         logger.info('Sampling {} random numbers with seed {}'.format(count, seed))
         self._shared_mem = multiprocessing.Array(ctypes.c_float, count)
         self.noise = np.ctypeslib.as_array(self._shared_mem.get_obj())
