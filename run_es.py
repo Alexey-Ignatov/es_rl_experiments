@@ -33,7 +33,7 @@ def run_coms_list(bashCommands, cwd):
 def get_worker_coms_list(master_ip):
     return [
             ("{} {}/redis_config/redis_local_mirror.conf".format(redis_server_path, start_dir), False),
-            ("python -m es_distributed.main workers --master_host {} --relay_socket_path /tmp/es_redis_relay.sock --num_workers 8".format( master_ip), False)]
+            ("python -m es_distributed.main workers --master_host {} --relay_socket_path /tmp/es_redis_relay.sock --num_workers 1".format( master_ip), False)]
 
 
 def get_master_coms_list():
