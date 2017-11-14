@@ -32,12 +32,12 @@ def run_coms_list(bashCommands, cwd):
 
 def get_worker_coms_list(master_ip):
     return [
-            ("{} {}/redis_config/redis_local_mirror.conf".format(redis_server_path, start_dir), False),
             ("python -m es_distributed.main workers --master_host {} --relay_socket_path /tmp/es_redis_relay.sock --num_workers 1".format( master_ip), True)]
 
 
 def get_master_coms_list():
     return [
+            ("{} {}/redis_config/redis_master.conf".format(redis_server_path, start_dir), False),
             ("python -m es_distributed.main master --exp_file ./configurations/humanoid.json --master_socket_path /tmp/es_redis_master.sock --log_dir {}".format(log_dir), True)]
 
 
@@ -72,7 +72,7 @@ else:
         with open(tmp_dir + '/' + my_ip, 'w') as f:
             f.write(my_ip)
 
-        redis_relay = "{} {}/redis_config/redis_master.conf".format(redis_server_path, start_dir)
+        redis_relay = "{} {}/redis_config/redis_local_mirror.conf".format(redis_server_path, start_dir)
         relay_run_com = "python -m es_distributed.main relay --master_host localhost --relay_socket_path /tmp/es_redis_relay.sock"
 
         subprocess.Popen(redis_relay.split(), cwd = start_dir)
