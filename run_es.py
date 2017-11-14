@@ -10,7 +10,7 @@ start_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/es_rl_experim
 log_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/logs"
 redis_server_path = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/redis-stable/src/redis-server"
 master_ip_path = '/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/master_ip.txt'
-tmp_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/dir"
+tmp_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/tmp"
 
 
 def mkdir_p(path):
