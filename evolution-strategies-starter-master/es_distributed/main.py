@@ -43,8 +43,8 @@ def master(exp_str, exp_file, master_socket_path, log_dir):
             exp = json.loads(f.read())
     else:
         assert False
-    #log_dir = os.path.expanduser(log_dir) if log_dir else '/tmp/es_master_{}'.format(os.getpid())
-    log_dir = os.path.expanduser(log_dir) + 'es_master_{}'.format(os.getpid())
+    log_dir = os.path.expanduser(log_dir) if log_dir else '/tmp/es_master_{}'.format(os.getpid())
+    #log_dir = os.path.expanduser(log_dir) + '/es_master_{}'.format(os.getpid())
     mkdir_p(log_dir)
     run_master({'unix_socket_path': master_socket_path}, log_dir, exp)
 
