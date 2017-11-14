@@ -38,7 +38,6 @@ def get_worker_coms_list(master_ip):
 
 def get_master_coms_list():
     return [
-            ("{} {}/redis_config/redis_master.conf".format(redis_server_path, start_dir), False),
             ("python -m es_distributed.main master --exp_file ./configurations/humanoid.json --master_socket_path /tmp/es_redis_master.sock --log_dir {}".format(log_dir), True)]
 
 
@@ -73,7 +72,10 @@ else:
         with open(tmp_dir + '/' + my_ip, 'w') as f:
             f.write(my_ip)
 
+        redis_relay = "{} {}/redis_config/redis_master.conf".format(redis_server_path, start_dir)
         relay_run_com = "python -m es_distributed.main relay --master_host localhost --relay_socket_path /tmp/es_redis_relay.sock"
+
+        subprocess.Popen(redis_relay.split(), cwd = start_dir)
         subprocess.Popen(relay_run_com.split(),stdout=subprocess.PIPE, cwd = start_dir)
 
     run_coms_list(get_worker_coms_list(master_ip), start_dir)
