@@ -16,7 +16,7 @@ import numpy as np
 
 
 
-GRID_SIZE = 10
+GRID_SIZE = 20
 
 logger = logging.getLogger(__name__)
 
