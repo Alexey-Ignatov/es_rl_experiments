@@ -73,7 +73,7 @@ else:
             f.write(my_ip)
 
         redis_relay = "{} {}/redis_config/redis_local_mirror.conf".format(redis_server_path, start_dir)
-        relay_run_com = "python -m es_distributed.main relay --master_host localhost --relay_socket_path /tmp/es_redis_relay.sock"
+        relay_run_com = "python -m es_distributed.main relay --master_host {} --relay_socket_path /tmp/es_redis_relay.sock".format( master_ip)
 
         subprocess.Popen(redis_relay.split(), cwd = start_dir)
         subprocess.Popen(relay_run_com.split(),stdout=subprocess.PIPE, cwd = start_dir)
