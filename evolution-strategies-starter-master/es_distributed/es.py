@@ -1,6 +1,7 @@
 import logging
 import time
 from collections import namedtuple
+import os
 
 import numpy as np
 
@@ -144,7 +145,11 @@ def run_master(master_redis_cfg, log_dir, exp):
         env.observation_space.shape,
         eps=1e-2  # eps to prevent dividing by zero at the beginning when computing mean/stdev
     )
-    if 'init_from' in exp['policy']:
+
+    import os.path as osp
+    filename = osp.join(tlogger.get_dir(), 'snapshot.h5')
+    if osp.exists(filename):
+    #if 'init_from' in exp['policy']:
         logger.info('Initializing weights from {}'.format(exp['policy']['init_from']))
         policy.initialize_from(exp['policy']['init_from'], ob_stat)
 
@@ -293,11 +298,17 @@ def run_master(master_redis_cfg, log_dir, exp):
 
         if config.snapshot_freq != 0 and curr_task_id % config.snapshot_freq == 0:
             import os.path as osp
-            filename = osp.join(tlogger.get_dir(), 'snapshot_iter{:05d}_rew{}.h5'.format(
-                curr_task_id,
-                np.nan if not eval_rets else int(np.mean(eval_rets))
-            ))
-            assert not osp.exists(filename)
+            filename = osp.join(tlogger.get_dir(), 'snapshot.h5')
+            #filename = osp.join(tlogger.get_dir(), 'snapshot_iter{:05d}_rew{}.h5'.format(
+            #    curr_task_id,
+            #    np.nan if not eval_rets else int(np.mean(eval_rets))
+            #))
+            #assert not osp.exists(filename)
+            try:
+                os.remove(filename)
+            except OSError:
+                pass
+
             policy.save(filename)
             tlogger.log('Saved snapshot {}'.format(filename))
 
