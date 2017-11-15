@@ -135,7 +135,8 @@ def run_master(master_redis_cfg, log_dir, exp):
     from .optimizers import SGD, Adam
     from . import tabular_logger as tlogger
     import os.path as osp
-    import pickle
+    import dill as pickle
+
 
     logger.info('Tabular logging to {}'.format(log_dir))
     tlogger.start(log_dir)
