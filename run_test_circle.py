@@ -6,7 +6,7 @@ import subprocess
 import os
 import errno
 
-bashCommand = "squeue  -p test| grep ignatov"
+bashCommand = "squeue  -p test | grep ignatov"
 process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
 
 output, error = process.communicate()
