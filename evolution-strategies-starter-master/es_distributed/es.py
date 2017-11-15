@@ -161,7 +161,7 @@ def run_master(master_redis_cfg, log_dir, exp):
     filename = osp.join(tlogger.get_dir(), 'optimizer.pickle')
     if osp.exists(filename):
         with open(filename, 'rb') as f:
-        optimizer = pickle.load(f)
+            optimizer = pickle.load(f)
     else:
         optimizer = {'sgd': SGD, 'adam': Adam}[exp['optimizer']['type']](policy, **exp['optimizer']['args'])
 
