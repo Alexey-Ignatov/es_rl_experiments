@@ -37,7 +37,7 @@ while 1:
     else:
         print('some tasks already in test')
 
-    time.sleep(60 * 5)
+    time.sleep(10)
 #output, error = process.communicate()
 #print(str(output))
 
