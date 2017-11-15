@@ -142,11 +142,7 @@ def run_master(master_redis_cfg, log_dir, exp):
     config, env, sess, policy = setup(exp, single_threaded=False)
     master = MasterClient(master_redis_cfg)
 
-    filename = osp.join(tlogger.get_dir(), 'optimizer.pickle')
-    if osp.exists(filename):
-        optimizer = pickle.load(open(filename, 'rb'))
-    else:
-        optimizer = {'sgd': SGD, 'adam': Adam}[exp['optimizer']['type']](policy, **exp['optimizer']['args'])
+
     noise = SharedNoiseTable()
     rs = np.random.RandomState()
     ob_stat = RunningStat(
@@ -161,6 +157,14 @@ def run_master(master_redis_cfg, log_dir, exp):
         logger.info('Initializing weights from {}'.format(filename))
         #policy.initialize_from(exp['policy']['init_from'], ob_stat)
         policy.initialize_from(filename)
+
+    filename = osp.join(tlogger.get_dir(), 'optimizer.pickle')
+    if osp.exists(filename):
+        with open(filename, 'rb') as f:
+        optimizer = pickle.load(f)
+    else:
+        optimizer = {'sgd': SGD, 'adam': Adam}[exp['optimizer']['type']](policy, **exp['optimizer']['args'])
+
 
     if config.episode_cutoff_mode.startswith('adaptive:'):
         _, args = config.episode_cutoff_mode.split(':')
@@ -325,7 +329,9 @@ def run_master(master_redis_cfg, log_dir, exp):
             except OSError:
                 pass
 
-            pickle.dump(optimizer, open(filename, 'wb'))
+            with open(filename, 'wb') as f:
+                pickle.dump(optimizer,f)
+
             tlogger.log('Saved snapshot {}'.format(filename))
 
 
