@@ -19,7 +19,7 @@ try:
 except subprocess.CalledProcessError:
     procs = 0
 
-print(procs)
+
 if procs == 0:
     try:
         subprocess.check_output('rm /mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/tmp/*', shell=True)
@@ -31,7 +31,9 @@ if procs == 0:
     except subprocess.CalledProcessError:
         pass
 
-    subprocess.check_output(run_on_test, shell=True)
+    print(subprocess.check_output(run_on_test, shell=True))
+else:
+    print('some tasks already in test')
 #output, error = process.communicate()
 #print(str(output))
 
