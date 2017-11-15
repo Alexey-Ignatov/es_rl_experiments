@@ -31,7 +31,7 @@ if procs == 0:
     except subprocess.CalledProcessError:
         pass
 
-    print(subprocess.check_output(run_on_test, shell=True))
+    print(str(subprocess.check_output(run_on_test, shell=True)))
 else:
     print('some tasks already in test')
 #output, error = process.communicate()
