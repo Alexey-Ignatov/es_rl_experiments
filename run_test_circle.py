@@ -16,20 +16,23 @@ run_on_test = 'sbatch -p test -n128 run python /mnt/data/users/dm4/vol12/ignatov
 #sqCommand = "ls | grep e"
 try:
     procs = len(subprocess.check_output(sqCommand, shell=True   ).splitlines())
-except subprocess.CalledProcessError:
+
     procs = 0
 
 print(procs)
 if procs == 0:
 
-    subprocess.check_output('rm /mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/tmp/*', shell=True)
-
     try:
-        os.remove(master_ip_path)
-    except OSError:
+        subprocess.check_output('rm /mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/tmp/*', shell=True)
+    except subprocess.CalledProcessError:
         pass
 
-    subprocess.check_output('run_on_test', shell=True)
+    try:
+        subprocess.check_output('rm '+ master_ip_path, shell=True)
+    except subprocess.CalledProcessError:
+        pass
+
+    subprocess.check_output(run_on_test, shell=True)
 #output, error = process.communicate()
 #print(str(output))
 
