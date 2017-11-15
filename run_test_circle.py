@@ -16,12 +16,11 @@ run_on_test = 'sbatch -p test -n128 run python /mnt/data/users/dm4/vol12/ignatov
 #sqCommand = "ls | grep e"
 try:
     procs = len(subprocess.check_output(sqCommand, shell=True   ).splitlines())
-
+except subprocess.CalledProcessError:
     procs = 0
 
 print(procs)
 if procs == 0:
-
     try:
         subprocess.check_output('rm /mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/tmp/*', shell=True)
     except subprocess.CalledProcessError:
