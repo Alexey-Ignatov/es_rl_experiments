@@ -16,7 +16,7 @@ run_on_test = 'sbatch -p test -n128 run python /mnt/data/users/dm4/vol12/ignatov
 #sqCommand = "ls | grep e"
 
 while 1:
-    time.sleep(60*5)
+
     try:
         procs = len(subprocess.check_output(sqCommand, shell=True   ).splitlines())
     except subprocess.CalledProcessError:
@@ -36,6 +36,8 @@ while 1:
         print(str(subprocess.check_output(run_on_test, shell=True)))
     else:
         print('some tasks already in test')
+
+    time.sleep(60 * 5)
 #output, error = process.communicate()
 #print(str(output))
 
