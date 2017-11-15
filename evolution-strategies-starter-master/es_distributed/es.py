@@ -150,10 +150,10 @@ def run_master(master_redis_cfg, log_dir, exp):
     filename = osp.join(tlogger.get_dir(), 'snapshot.h5')
     if osp.exists(filename):
     #if 'init_from' in exp['policy']:
-        logger.info('Initializing weights from {}'.format(exp['policy']['init_from']))
+        logger.info('Initializing weights from {}'.format(filename))
         #policy.initialize_from(exp['policy']['init_from'], ob_stat)
         policy.initialize_from(filename, ob_stat)
-        
+
     if config.episode_cutoff_mode.startswith('adaptive:'):
         _, args = config.episode_cutoff_mode.split(':')
         arg0, arg1, arg2 = args.split(',')
