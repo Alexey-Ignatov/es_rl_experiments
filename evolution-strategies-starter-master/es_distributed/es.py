@@ -134,11 +134,19 @@ def run_master(master_redis_cfg, log_dir, exp):
     logger.info('run_master: {}'.format(locals()))
     from .optimizers import SGD, Adam
     from . import tabular_logger as tlogger
+    import os.path as osp
+    import pickle
+
     logger.info('Tabular logging to {}'.format(log_dir))
     tlogger.start(log_dir)
     config, env, sess, policy = setup(exp, single_threaded=False)
     master = MasterClient(master_redis_cfg)
-    optimizer = {'sgd': SGD, 'adam': Adam}[exp['optimizer']['type']](policy, **exp['optimizer']['args'])
+
+    filename = osp.join(tlogger.get_dir(), 'optimizer.pickle')
+    if osp.exists(filename):
+        optimizer = pickle.load(open(filename, 'rb'))
+    else:
+        optimizer = {'sgd': SGD, 'adam': Adam}[exp['optimizer']['type']](policy, **exp['optimizer']['args'])
     noise = SharedNoiseTable()
     rs = np.random.RandomState()
     ob_stat = RunningStat(
@@ -146,7 +154,7 @@ def run_master(master_redis_cfg, log_dir, exp):
         eps=1e-2  # eps to prevent dividing by zero at the beginning when computing mean/stdev
     )
 
-    import os.path as osp
+
     filename = osp.join(tlogger.get_dir(), 'snapshot.h5')
     if osp.exists(filename):
     #if 'init_from' in exp['policy']:
@@ -309,8 +317,15 @@ def run_master(master_redis_cfg, log_dir, exp):
                 os.remove(filename)
             except OSError:
                 pass
-
             policy.save(filename)
+
+            filename = osp.join(tlogger.get_dir(), 'optimizer.pickle')
+            try:
+                os.remove(filename)
+            except OSError:
+                pass
+
+            pickle.dump(optimizer, open(filename, 'wb'))
             tlogger.log('Saved snapshot {}'.format(filename))
 
 
