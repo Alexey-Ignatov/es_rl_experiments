@@ -323,7 +323,7 @@ class CatchPolicy(Policy):
             obs = []
         ob = env.reset()
         for _ in range(timestep_limit):
-            ac = self.act(ob[None], random_stream=random_stream)[0]
+            ac = int(self.act(ob[None], random_stream=random_stream)[0])
             if save_obs:
                 obs.append(ob)
             ob, rew, done, _ = env.step(ac)
