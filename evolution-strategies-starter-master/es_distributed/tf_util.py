@@ -114,10 +114,10 @@ def normc_initializer(std=1.0):
     return _initializer
 
 def dense(x, size, name, weight_init=None, bias=True):
-    w = tf.get_variable(name + "/w", [x.get_shape()[1], size], initializer=weight_init)
+    w = tf.get_variable([x.get_shape()[1], size], name + "/w",  initializer=weight_init)
     ret = tf.matmul(x, w)
     if bias:
-        b = tf.get_variable(name + "/b", [size], initializer=tf.zeros_initializer)
+        b = tf.get_variable([size], name + "/b",  initializer=tf.zeros_initializer)
         return ret + b
     else:
         return ret
