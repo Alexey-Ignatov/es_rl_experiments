@@ -11,7 +11,7 @@ log_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/logs"
 redis_server_path = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/redis-stable/src/redis-server"
 master_ip_path = '/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/master_ip.txt'
 tmp_dir = "/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/tmp"
-python_bin = '/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/miniconda3/envs/my_env/bin/python'
+python_bin = '/mnt/data/users/dm4/vol12/ignatovalexey_1956/_scratch/miniconda3/envs/base_env/bin/python'
 
 def mkdir_p(path):
     try:
