@@ -252,6 +252,8 @@ class CatchPolicy(Policy):
             # Policy network
             o = tf.placeholder(tf.float32, [None] + list(ob_space.shape))
             a = self._make_net(o)
+            self.o = o
+            self.a = a
             self._act = U.function([o], a)
         return scope
 
@@ -266,12 +268,14 @@ class CatchPolicy(Policy):
 
         # Map to action
         scores = U.dense(x, 3, 'out', U.normc_initializer(0.01))
-        scores_nab = tf.reshape(scores, [-1, 1, 3])
-        aidx_na =  tf.argmax(scores_nab, 2)  # 0 ... num_bins-1
+        #scores_nab = tf.reshape(scores, [-1, 1, 3])
+        #aidx_na =  tf.argmax(scores_nab, 2)  # 0 ... num_bins-1
+
+
         #a = tf.to_float(scores)
         #sft = tf.nn.softmax(scores)
 
-        return aidx_na
+        return tf.to_float(scores)
 
     def initialize_from(self, filename, ob_stat=None):
         """
@@ -323,10 +327,10 @@ class CatchPolicy(Policy):
             obs = []
         ob = env.reset()
         for _ in range(timestep_limit):
-            ac = int(self.act(ob[None], random_stream=random_stream)[0])
+            ac_scores = self.act(ob[None], random_stream=random_stream)[0]
             if save_obs:
                 obs.append(ob)
-            ob, rew, done, _ = env.step(ac)
+            ob, rew, done, _ = env.step(np.argmax(ac_scores))
             rews.append(rew)
             t += 1
             if render:
