@@ -25,7 +25,7 @@
         100,
         100
       ],
-      "nonlin_type": "tanh"
+      "nonlin_type": "relu"
     },
     "type": "CatchPolicy"
   }
