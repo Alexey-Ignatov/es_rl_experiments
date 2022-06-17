@@ -30,7 +30,7 @@ mock==2.0.0
 nbconvert==5.3.1
 nbformat==4.4.0
 notebook==5.2.2
-numpy==1.12.1
+numpy==1.21.0
 pandocfilters==1.4.2
 parso==0.1.1
 pbr==3.1.1
