@@ -12,7 +12,7 @@ entrypoints==0.2.3
 future==0.16.0
 -e git+https://github.com/openai/gym.git@0eccce8146d011f7691f4aff5766be7c5a4d8cbd#egg=gym
 h5py==2.7.1
-html5lib==0.9999999
+html5lib==0.999999999
 idna==2.6
 ipykernel==4.7.0
 ipython==6.2.1
